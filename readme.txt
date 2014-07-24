@@ -8,7 +8,7 @@ Stable tag: 0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-** Beta Plugin - it works but is rusty! **
+Beta Plugin - it works but is rusty!
 WP Broadbean is a plugin allowing jobs added to Broadbean to show in your WordPress site.
 
 == Description ==
