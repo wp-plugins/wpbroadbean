@@ -13,7 +13,7 @@ function wpbb_add_admin_menu() {
 		'edit_posts', // capability,
 		'wp_broadbean_home', // menu_slug,
 		'__return_false', // function,
-		'div', // icon url
+		'dashicons-businessman', // icon url
 		'90' // position
 	);
 	
@@ -268,7 +268,7 @@ function wpbb_change_title_text( $title ){
 	}
 	
 	/* return our new text */
-	return $title;
+	return apply_filters( 'wpbb_post_title_text', $title, $wpbb_screen );
 	
 }
  
@@ -286,7 +286,7 @@ function wpbb_job_post_editor_content( $content ) {
 	
 	$content = "Replace this text with the long description of the job.";
 
-	return $content;
+	return apply_filters( 'wpbb_post_editor_text', $content );
 }
 
 add_filter( 'default_content', 'wpbb_job_post_editor_content' );
@@ -325,7 +325,7 @@ function wpbb_get_current_admin_post_type() {
 * Change html output of the excerpt box, removing the paragraph
 * of instruction text.
 ***************************************************************/
-function wpbb_job_short_description_meta_box($post) {
+function wpbb_job_short_description_meta_box( $post ) {
 	
 	?>
 	<label class="screen-reader-text" for="excerpt"><?php _e('Excerpt') ?></label>
