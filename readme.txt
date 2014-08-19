@@ -4,7 +4,7 @@ Donate link: http://markwilkinson.me/saythanks
 Tags: jobs, recruitment
 Requires at least: 3.9
 Tested up to: 3.9.1
-Stable tag: 0.5
+Stable tag: 0.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,10 @@ Yes they do. When you choose to include your own site in a multi job posting Bro
 1. The WP Broadbean screen, added to get you started.
 
 == Changelog ==
+
+= 0.6 =
+* Added the ability to use WYSIWYG when adding your own settings to the setting page
+* Removed the post type support filters as post type support can be added with add_post_type_support()
 
 = 0.5 =
 * Corrected issue where using an inbox.php file from the theme folder would not work.
