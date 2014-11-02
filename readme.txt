@@ -13,7 +13,15 @@ WP Broadbean is a plugin allowing jobs added to Broadbean to show in your WordPr
 
 == Description ==
 
-WP Broadbean is a plugin designed to work alongside the Broadbean Adcourier job post system allowing jobs added to Broadbean to show in your WordPress site. The plugin adds custom post types and taxonomies to allow you to enter jobs into your WordPress site. More importantly it provides an end-point to accept feed data sent by Broadbean and add this as job posts to your site.
+Developed by [Mark Wilkinson](http://markwilkinson.me) WP Broadbean as a plugin to integrate your WordPress website with the [Broadbean Adcourier](http://www.broadbean.com/agency-recruiters-us.html) system from Broadbean Technology.
+
+Broadband Adcourier allows you to integrate a Broadbean feed from your Adcourier account to send jobs added there to your WordPress website and have them show on your own site.
+
+= What Does the Plugin Do? =
+
+The plugin adds a custom post type to deal with the jobs delivered by the Broadbean feed as well as a number of custom taxonomies so jobs can be grouped. The plugin also provides a custom post edit screen for jobs to allow specific custom meta data to easily be edited and added for each job such as salary and contact email addresses etc.
+
+WP Broadbean also provides an end point for accept a job feed sent by Broadbean in order for jobs added in Broadbean to appear in your WordPress website.
 
 == Installation ==
 
@@ -28,17 +36,58 @@ To install the plugin:
 
 == Frequently Asked Questions ==
 
-Do Broadbean charge for this?
+= Do Broadbean charge for this? =
 
 Yes they do. When you choose to include your own site in a multi job posting Broadbean have the setup a "feed" to your site and they charge a one off fee for this.
 
+= What is the Posting URL which Broadbean should send their feed to? =
+
+The plugin adds an endpoints at the following URL:
+
+http://domain.com/?wpbb=broadbean
+
+Of course replacing domain.com for your sites domain. This is the URL which Broadbean should post the feed to when a job is added to the Adcourier system.
+
+= Is there some test XML data I could test the plugin on my site with? =
+
+Yes you can use the following XML to try a test the feed works:
+
+`
+<?xml version="1.0" encoding="UTF-8"?>
+<job>
+    <command>add</command>
+    <username>XXXXXXXXX</username>
+    <password>XXXXXXXXXX</password>
+    <contact_name>Bob Smith</contact_name>
+    <contact_email>bob@smith.com</contact_email>
+    <application_email>bob.12345.123@smith.aplitrak.com</application_email>
+    <job_reference>ZZZZZZ</job_reference>
+    <job_title>Another Test Engineer</job_title>
+    <job_type>Contract</job_type>
+    <job_duration>6 Months</job_duration>
+    <job_startdate>ASAP</job_startdate>
+    <job_description>This is the detailed description</job_description>
+    <job_short_description>This is the short description</job_short_description>
+    <job_location>London</job_location>
+    <job_category>Marketing</job_category>
+    <salary_currency>gbp</salary_currency>
+    <salary>XXXXXX</salary>
+    <salary_per>annum</salary_per>
+    <featured_job>1</featured_job>
+</job>
+`
+
+= What if I want to use different fields that provided in the end point in wpbb-inbox.php? =
+
+The plugin is extensible and should you wish to use a completely bespoke end point file you can add a file named `inbox.php` into a folder named `wpbb` in your theme and this will be used instead to process the feed.
+
 == Screenshots ==
 
-1. The WP Broadbean screen, added to get you started.
+Coming soon…
 
 == Changelog ==
 
-= 0.8 +
+= 0.8 =
 * Add the select2 js library for select input in the metaboxes
 
 = 0.7 =
