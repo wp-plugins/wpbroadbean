@@ -18,8 +18,6 @@ You can find out more about the WP Broadbean plugin on the [WP Broadbean website
 
 We also offer a service to complete a Broadbean integration with WordPress for you. Find out more about our [WPBB Assist service here](http://wpbroadbean.com/assist/).
 
-[youtube http://www.youtube.com/watch?v=CAkV09vl6UI]
-
 == Installation ==
 
 To install the plugin:
