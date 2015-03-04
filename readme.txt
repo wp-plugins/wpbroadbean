@@ -4,7 +4,7 @@ Donate link: http://markwilkinson.me/saythanks
 Tags: jobs, recruitment
 Requires at least: 3.9
 Tested up to: 4.1
-Stable tag: 2.0
+Stable tag: 2.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,13 +12,13 @@ WP Broadbean is a plugin allowing jobs added to Broadbean to show in your WordPr
 
 == Description ==
 
-**If you are currently running a version lower than version 2.0, please DO NOT update.**
-
 [WP Broadbean](http://wpbroadbean.com/ "Broadbean posted jobs on your WordPress website") is a plugin designed to work alongside the Broadbean Adcourier job posting system allowing jobs added to Broadbean to show in your WordPress site. The plugin adds custom post types and taxonomies to allow you to add jobs. More importantly it provides an end-point to accept feed data sent by Broadbean and add this as job posts to your site.
 
 You can find out more about the WP Broadbean plugin on the [WP Broadbean website](http://wpbroadbean.com/ "Broadbean posted jobs on your WordPress website").
 
 We also offer a service to complete a Broadbean integration with WordPress for you. Find out more about our [WPBB Assist service here](http://wpbroadbean.com/assist/).
+
+[youtube http://www.youtube.com/watch?v=CAkV09vl6UI]
 
 == Installation ==
 
@@ -70,6 +70,9 @@ Take a look at the [Wiki on Github](https://github.com/wpmark/wpbroadbean/wiki/)
 2. Single job edit post screen
 
 == Changelog ==
+
+= 2.0.1 =
+* Corrected an issue where username and password failed to authenticate
 
 = 2.0 =
 * Removed the beta status!
