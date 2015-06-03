@@ -3,7 +3,7 @@
 Plugin Name: WP Broadbean
 Plugin URI: http://wpbroadbean.com
 Description: Integrates Broadbean Adcourier with WordPress. This plugin allows jobs posted through Broadbean's Adcourier system to be sent to your WordPress website.
-Version: 2.0.5
+Version: 2.0.6
 Author: Mark Wilkinson
 Author URI: http://markwilkinson.me
 License: GPLv2 or later
@@ -25,7 +25,6 @@ require_once( dirname( __FILE__ ) . '/functions/wpbb-functions.php' );
 require_once( dirname( __FILE__ ) . '/functions/admin/admin-menus.php' );
 require_once( dirname( __FILE__ ) . '/functions/admin/admin.php' );
 require_once( dirname( __FILE__ ) . '/functions/admin/default-settings.php' );
-require_once( dirname( __FILE__ ) . '/functions/shortcodes.php' );
 
 /* check whether the metabox class already exists - and load it if not */
 if( ! class_exists( 'CMB_Meta_Box' ) )
@@ -143,9 +142,9 @@ function wpbb_add_styles_scripts() {
 	if( is_page( $apply_pageid ) ) {
 		
 		/* enqueue the jquery validate plugin */
-		//wp_enqueue_script( 'jquery' );
-		//wp_enqueue_script( 'wpbb_jquery_validate', plugins_url( '/js/jquery.validate.js', __FILE__ ), 'jquery' );
-		//wp_enqueue_script( 'wpbb_validate', plugins_url( '/js/validate.js', __FILE__ ), 'wpbb_jquery_validate', array(), true ); 
+		wp_enqueue_script( 'jquery' );
+		wp_enqueue_script( 'wpbb_jquery_validate', plugins_url( '/js/jquery.validate.js', __FILE__ ), 'jquery' );
+		wp_enqueue_script( 'wpbb_validate', plugins_url( '/js/validate.js', __FILE__ ), 'wpbb_jquery_validate', array(), true ); 
 
 		/* enqueue the application form styles */
 		wp_enqueue_style( 'wpbb_form_styles', plugins_url( '/css/form-style.css', __FILE__ ) );
