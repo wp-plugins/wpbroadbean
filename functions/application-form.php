@@ -1,108 +1,228 @@
 <?php
 /**
- * function wpbb_application_form
- * renders the application form on the page selected for apply in settings
- * @param (string) $content is the current post content
- * @return (string) $content is the new content with the form added after
+ * function wpbb_default_application_form_fields()
+ *
+ * adds the default fields for the application form
+ * @param	array	$fields in the current array of fields
+ * @param	int		$job_post_id is the post id of the job being applied for
  */
-function wpbb_application_form( $content ) {
+function wpbb_default_application_form_fields( $fields, $job_post_id ) {
 	
-	/* get the apply page from the settings */
-	$apply_pageid = get_option( 'wpbb_apply_page_id' );
-	
-	/* check this is the apply page */
-	if( ! is_page( $apply_pageid ) )
-		return $content;
-		
-	/* check we have a job id passed */
-	if( ! empty( $_GET[ 'job_id' ] ) ) {
-		
-		/* get the post for this job reference */
-		$job_post = wpbb_get_job_by_reference( $_GET[ 'job_id' ] );
-
-		/* check if we have a job post for this reference */
-		if( $job_post == false ) {
-			
-			/* create an error message as no job has this reference */
-			return '<p class="message error">Error: No job exists with this job reference.</p>' . $content;
-			
-		}
-		
-		/* get the contact email and broadbean tracking email for this job */
-		$contact_email = get_post_meta( $job_post, '_wpbb_job_contact_email', true );
-		$bb_email = get_post_meta( $job_post, '_wpbb_job_broadbean_application_email', true );
-		
-		/* check whether the form has already been posted */
-		if( ! isset( $_POST[ 'wpbb_submit' ] ) ) {
-			
-			/* start the form */
-			$form = '<div class="wpbb-form-wrapper"><form enctype="multipart/form-data" id="wpbb-application-form" method="post" action="">';
-			
-			/* add a hidden input field for the job ref, contact email and broadbean email */
-			$form .= '<input class="wpbb-input" type="hidden" name="wpbb_job_reference" id="wpbb-job-reference" value="' . esc_attr( $_GET[ 'job_id' ] ) . '" />';
-			
-			$form .= '<input class="wpbb-input" type="hidden" name="wpbb_contact_email" id="wpbb-contact-email" value="' . esc_attr( $contact_email ) . '" /><input class="wpbb-input" type="hidden" name="wpbb_broadbean_application_email" id="wpbb-broadbean-application-email" value="' . esc_attr( $bb_email ) . '" />';
-			
-			/* add inputs for name and email address */
-			$form .= '<div class="wpbb-input"><label for="wpbb_name" class="require">Name</label><input class="wpbb-input" type="text" name="wpbb_name" id="wpbb-name" value="" tabindex="3" required><label class="error" for="wpbb_name">Please enter your name.</label></div>';
-			
-			$form .= '<div class="wpbb-input"><label for="wpbb_email" class="require">Email</label><input class="wpbb-input" type="email" name="wpbb_email" id="wpbb-email" value="" tabindex="4" required><p class="wpbb_description">Please enter a valid email address as this will be used to contact you.</p></div>';
-			
-			/* add the upload input field for the cv */
-			$form .= '<div class="wpbb-input"><label for="wpbb_file">Attach a CV</label><input type="file" name="wpbb_upload" /><p class="wpbb_description">Please attach your CV in PDF format.</p></div>';
-			
-			/* add the submit button */
-			$form .= '<div class="wpbb_submit"><input type="submit" value="Submit" name="wpbb_submit"></div>';
-			
-			/* end the form */
-			$form .= '</form></div>';
-		
-		/* form has been posted */	
-		} else {
-			
-			/**
-			 * TODO get the message from the form processing function as to whether the processing went through or not
-			 */
-			
-			/* set a string to store all messages in */
-			$wpbb_message_string = '';
-			
-			/* loop through each message adding to string */
-			global $wpbb_messages;
-			foreach( $wpbb_messages as $message ) {
-				$wpbb_message_string .= $message . '<br />';
-			}
-			
-		}
-	
-	/* no job ref was passed in the query string */	
-	} else {
-		
-		/* set an output message rather than the form */
-		$form = '<p class="message error">Error: No job reference detected!</p>';
-		
-	}
-	
-	/* make the form markup filterable */
-	$form = apply_filters(
-		'wpbb_application_form_html',
-		$form,
-		$_GET[ 'job_id' ]
+	/* add the field (hidden) for job reference */
+	$fields[ 'job_reference' ] = array(
+		'name'		=> 'job_reference', // this forms the name part of the input and the meta key when the application is saved
+		'type'		=> 'hidden',
+		'class'		=> 'wpbb-job-reference',
+		'value'		=> $_GET[ 'job_id' ],
+		'label'		=> 'Job Reference', // not used for hidden fields
+		'required'	=> false
 	);
 	
-	/* add message to the form content */
-	$form = $form . $wpbb_message_string;
+	/* add the field (hidden) for job reference */
+	$fields[ 'job_post_id' ] = array(
+		'name'		=> 'job_post_id',
+		'type'		=> 'hidden',
+		'class'		=> 'wpbb-job-postid',
+		'value'		=> $job_post_id,
+		'label'		=> 'Job Post ID', // not used for hidden fields
+		'required'	=> false
+	);
 	
-	/* check we have something in our form variable */
-	if( empty( $form ) )
-		return $content;
+	/* add the field (hidden) for contact email */
+	$fields[ 'contact_email' ] = array(
+		'name'		=> 'contact_email',
+		'type'		=> 'hidden',
+		'class'		=> 'wpbb-contact-email',
+		'value'		=> get_post_meta( $job_post_id, '_wpbb_job_contact_email', true ),
+		'label'		=> 'Contact Email', // not used for hidden fields
+		'required'	=> false
+	);
 	
-	/* return the form with content */
-	return $content . $form;
+	/* add the field (hidden) for tracking email */
+	$fields[ 'tracking_email' ] = array(
+		'name'		=> 'tracking_email',
+		'type'		=> 'hidden',
+		'class'		=> 'wpbb-tracking-email',
+		'value'		=> get_post_meta( $job_post_id, '_wpbb_job_broadbean_application_email', true ),
+		'label'		=> 'Tracking Email', // not used for hidden fields
+		'required'	=> false
+	);
+	
+	/* add the field (hidden) for name */
+	$fields[ 'applicant_name' ] = array(
+		'name'		=> 'applicant_name',
+		'type'		=> 'text',
+		'class'		=> 'wpbb-applicant-name',
+		'value'		=> '',
+		'label'		=> 'Name', // not used for hidden fields
+		'desc'		=> 'Please enter your full name',
+		'required'	=> true
+	);
+	
+	/* add the field (hidden) for name */
+	$fields[ 'applicant_email' ] = array(
+		'name'		=> 'applicant_email',
+		'type'		=> 'email',
+		'class'		=> 'wpbb-applicant-email',
+		'value'		=> '',
+		'label'		=> 'Email', // not used for hidden fields
+		'desc'		=> 'Please enter a valid email address.',
+		'required'	=> true
+	);
+	
+	/**
+	 * file upload fields are not saved as post meta
+	 * they are upload as an attachment to the application post
+	 * the files are also attached to the notification email
+	 */
+	$fields[ 'cv' ] = array(
+		'name'		=> 'applicant_cv',
+		'type'		=> 'file',
+		'class'		=> 'wpbb-applicant-cv',
+		'value'		=> '',
+		'label'		=> 'CV Upload', // not used for hidden fields
+		'desc'		=> 'Upload your CV in PDF format.',
+		'required'	=> false
+	);
+	
+	return $fields;
 	
 }
 
-add_filter( 'the_content', 'wpbb_application_form' );
+add_filter( 'wpbb_application_form_fields', 'wpbb_default_application_form_fields', 10, 2 );
+
+/**
+ * function wpbb_application_form_shortcode()
+ * creates the application form shortcode which outputs the application form
+ * @param (string) $content is the current post content
+ * @return (string) $content is the new content with the form added after
+ */
+function wpbb_get_application_form_fields( $job_post_id ) {
+				
+	/**
+	 * form fields are added using a filter
+	 * to best see how this works, see how the default fields are added
+	 * default fields are added in the function wpbb_default_application_form_fields()
+	 */
+	$form_fields = apply_filters(
+		'wpbb_application_form_fields',
+		array(),
+		$job_post_id
+	);
+	
+	/* check we have fields to output */
+	if( ! empty( $form_fields ) ) {
+		
+		/* start a counter */
+		$i = 1;
+		
+		/* loop through the form fields array */
+		foreach( $form_fields as $form_field ) {
+			
+			/* is this a required field */
+			if( $form_field[ 'required' ] == true ) {
+				$required = ' required';
+			} else {
+				$required = '';
+			}
+			
+			/* build the css class for all fields */
+			$class = 'wpbb-field wpbb-field-' . $form_field[ 'type' ];
+			
+			/* if this is not a hidden field */
+			if( $form_field[ 'type' ] != 'hidden' ) {
+				
+				/* add the counter to the class */
+				$class .= ' wpbb-field-' . $i;
+				
+			} // end if hidden field
+			
+			?>
+			<div class="<?php echo esc_attr( $class ); ?>">
+			<?php
+				
+			/* if this is not a hiiden field - output the field label */
+			if( $form_field[ 'type' ] != 'hidden' && $form_field[ 'type' ] != 'file' ) {
+				
+				?>
+				<label for="wpbb_meta_<?php echo esc_attr( $form_field[ 'name' ] ); ?>"><?php echo esc_html( $form_field[ 'label' ] ); ?></label>
+				<?php
+				
+			}
+			
+			/* switch depending on field type */
+			switch( $form_field[ 'type' ] ) {
+				
+				/* if the setting is a textarea input */
+				case 'hidden' :
+				
+					?>
+					
+					<input type="hidden" name="wpbb_meta_<?php echo esc_attr( $form_field[ 'name' ] ); ?>" value="<?php echo esc_attr( $form_field[ 'value' ] ); ?>" />
+					
+					<?php
+				
+					/* break out of the switch statement */
+					break;
+				
+				/* if the setting type is an email field */
+				case 'email' :
+				
+					?>
+				
+					<input type="email" class="<?php echo esc_attr( $form_field[ 'class' ] ); ?>" name="wpbb_meta_<?php echo esc_attr( $form_field[ 'name' ] ); ?>" value="<?php echo esc_attr( $form_field[ 'value' ] ); ?>"<?php echo esc_attr( $required ); ?> />
+					
+					<?php
+						
+					/* break out of the switch statement */
+					break;
+					
+				/* if this is a file upload field */
+				case 'file' :
+				
+					?>
+					<label for="wpbb_file_<?php echo esc_attr( $form_field[ 'name' ] ); ?>"><?php echo esc_html( $form_field[ 'label' ] ); ?></label>
+					<input type="file" class="<?php echo esc_attr( $form_field[ 'class' ] ); ?>" name="wpbb_file_<?php echo esc_attr( $form_field[ 'name' ] ); ?>" value=""<?php echo esc_attr( $required ); ?> />
+					
+					<?php
+					
+					/* break out of the switch statement */
+					break;
+				
+				/* treat all other types as a text input */
+				default :
+				
+					?>
+				
+					<input type="text" class="<?php echo esc_attr( $form_field[ 'class' ] ); ?>" name="wpbb_meta_<?php echo esc_attr( $form_field[ 'name' ] ); ?>" value="<?php echo esc_attr( $form_field[ 'value' ] ); ?>"<?php echo esc_attr( $required ); ?> />
+					
+					<?php
+				
+			} // end switch
+			
+			/* check if we have a description to output */
+			if( ! empty( $form_field[ 'desc' ] ) ) {
+				
+				?>
+				<p class="<?php echo apply_filters( 'wpbb_input_description', 'wpbb-input-description', $form_field[ 'name' ] ); ?>"><?php echo esc_html( $form_field[ 'desc' ] ); ?></p>
+				<?php
+				
+			} // end if have description
+			
+			?>
+			</div><!-- // input wrapper -->
+			<?php
+			
+			/* increment the counter for non hidden fields */
+			if( $form_field[ 'type' ] != 'hidden' ) {
+				$i++;
+			}
+			
+		} // end loop through form fields
+					
+	} // end if have form fields to output
+				
+}
 
 /**
  * function wpbb_application_processing()
@@ -116,152 +236,148 @@ function wpbb_application_processing() {
 		return;
 	}
 	
-	/* check whether the form has already been posted */
-	if( isset( $_POST[ 'wpbb_submit' ] ) ) {
-		
-		/* get the post for this job reference */
-		$job_post = wpbb_get_job_by_reference( $_GET[ 'job_id' ] );
+	/* check whether the form has been posted */
+	if( ! isset( $_POST[ 'submit_application' ] ) ) {
+		return;	
+	}
 	
-		/* store message on success/failure in this array */
-		global $wpbb_messages;
-		$wpbb_messages = array();
+	/* setup some arrays to store meta related and file related fields */
+	$wpbb_meta_save		= array();
+	$wpbb_attach_save	= array();
+	
+	/* get all the posted data */
+	$posted = $_POST;
+	
+	/* build an array of meta values to save */
+	foreach( $_POST as $key => $value ) {
 		
-		/* check that the wp_handle_upload function is loaded */		
-		if ( ! function_exists( 'wp_handle_upload' ) )
-			require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		if( substr( $key, 0, 10 ) == 'wpbb_meta_' ) {
+			
+			/* remove the wpbb_meta_ part of the key */
+			$key = substr( $key, 10 );
+			
+			/* add this to the meta array */
+			$wpbb_meta_save[ $key ] = $value;
+			
+		}
 		
-		/* get the uploaded file information */
-		$wpbb_uploaded_file = $_FILES[ 'wpbb_upload' ];
+	}
+	
+	/* build an array of meta values to save */
+	foreach( $_FILES as $key => $value ) {
 		
-		/* check we have a file to upload */
-		if( $wpbb_uploaded_file[ 'name' ] != '' ) {
+		if( substr( $key, 0, 10 ) == 'wpbb_file_' ) {
 			
-			/* set overides to make it work */
-			$wpbb_upload_overrides = array( 'test_form' => false );
+			/* remove the wpbb_meta_ part of the key */
+			$key = substr( $key, 10 );
 			
-			/* upload the file to wp uploads dir */
-			$wpbb_moved_file = wp_handle_upload( $wpbb_uploaded_file, $wpbb_upload_overrides );
+			/* add this to the meta array */
+			$wpbb_attach_save[ $key ] = $value;
 			
-			/* get file type of the uploaded file */
-			$wpbb_filetype = wp_check_filetype( $wpbb_moved_file[ 'url' ], null );
-			
-			/* generate array of allowed mime types */
-			$wpbb_allowed_mime_types = apply_filters(
-				'wpbb_application_allowed_file_types',
-				array(
-					'application/pdf',
-				)
-			);
-			
-			/* check uploaded file is in allowed mime types array */
-			if( ! in_array( $wpbb_filetype[ 'type' ], $wpbb_allowed_mime_types) ) {
-				
-				/* upload file not allowed - add to messages */
-				$wpbb_messages[] = '<p class="message error">Error: CV is not an allowed file type.</p>';
-				
-			}
+		}
 		
-		}		
-			
-		/* get the wp upload directory */
-		$wpbb_wp_upload_dir = wp_upload_dir();
+	}
+	
+	/* insert the application post */
+	$wpbb_application_id = wp_insert_post(
+		array(
+			'post_type' => 'wpbb_application',
+			'post_title' => wp_strip_all_tags( $wpbb_meta_save[ 'applicant_name' ] ),
+			'post_status' => 'publish'
+		)
+	);
+	
+	/* store message on success/failure in this array */
+	global $wpbb_application_form_messages;
+	$wpbb_application_form_messages = array();
+	
+	/* check that the wp_handle_upload function is loaded */		
+	if ( ! function_exists( 'wp_handle_upload' ) )
+		require_once( ABSPATH . 'wp-admin/includes/file.php' );
+	
+	/* check we have files to attach */
+	if( ! empty( $wpbb_attach_save ) ) {
 		
-		/* setup the attachment data */
-		$wpbb_attachment = array(
-		     'post_mime_type' => $wpbb_filetype[ 'type' ],
-		     'post_title' => preg_replace('/\.[^.]+$/', '', $wpbb_uploaded_file[ 'name' ]),
-		     'post_content' => '',
-		     'guid' => $wpbb_wp_upload_dir[ 'url' ] . '/' . $wpbb_uploaded_file[ 'name' ],
-		     'post_status' => 'inherit'
-		);
+		/* attachments array */
+		$attachments = array();
 		
-		/* insert the application post */
-		$wpbb_application_id = wp_insert_post(
+		/* generate array of allowed mime types */
+		$wpbb_allowed_mime_types = apply_filters(
+			'wpbb_application_allowed_file_types',
 			array(
-				'post_type' => 'wpbb_application',
-				'post_title' => wp_strip_all_tags( $_POST[ 'wpbb_name' ] ),
-				'post_status' => 'publish'
+				'application/pdf',
 			)
 		);
 		
-		/* check the application post has been added */
-		if( $wpbb_application_id != 0 ) {
+		/* get the wp upload directory */
+		$wpbb_wp_upload_dir = wp_upload_dir();
+		
+		/* loop through each of the files to attach */
+		foreach( $wpbb_attach_save as $file ) {
 			
-			/* set the post meta data (custom fields) */
-			add_post_meta( $wpbb_application_id, '_wpbb_job_reference', wp_strip_all_tags( $_POST[ 'wpbb_job_reference' ] ), true );
-			add_post_meta( $wpbb_application_id, '_wpbb_applicant_email', wp_strip_all_tags( $_POST[ 'wpbb_email' ] ), true );
+			/* upload the file to wp uploads dir */
+			$moved_file = wp_handle_upload(
+				$file,
+				array( 'test_form' => false )
+			);
 			
-			/* check we have a file to attach */
-			if( $wpbb_uploaded_file[ 'name' ] != '' ) {
+			/* get file type of the uploaded file */
+			$filetype = wp_check_filetype( $moved_file[ 'url' ], null );
 			
+			/* check uploaded file is in allowed mime types array */
+			if( ! in_array( $filetype[ 'type' ], $wpbb_allowed_mime_types ) ) {
+			
+				/* upload file not allowed - add to messages */
+				$wpbb_application_form_messages[] = '<p class="message error">Error: CV is not an allowed file type.</p>';
+			
+			} else {
+				
+				/* setup the attachment data */
+				$wpbb_attachment = array(
+				     'post_mime_type' => $filetype[ 'type' ],
+				     'post_title' => preg_replace('/\.[^.]+$/', '', $file[ 'name' ] ),
+				     'post_content' => '',
+				     'guid' => $wpbb_wp_upload_dir[ 'url' ] . '/' . sanitize_file_name( $file[ 'name' ] ),
+				     'post_status' => 'inherit'
+				);
+				
 				/* add the attachment from the uploaded file */
-				$wpbb_attach_id = wp_insert_attachment( $wpbb_attachment, $wpbb_filetype[ 'file' ], $wpbb_application_id );
+				$wpbb_attach_id = wp_insert_attachment( $wpbb_attachment, $moved_file[ 'file' ], $wpbb_application_id );
 				require_once( ABSPATH . 'wp-admin/includes/image.php' );
-				$wpbb_attach_data = wp_generate_attachment_metadata( $wpbb_attach_id, $wpbb_filetype[ 'file' ] );
+				$wpbb_attach_data = wp_generate_attachment_metadata( $wpbb_attach_id, WP_CONTENT_DIR . '/uploads' . $wpbb_wp_upload_dir[ 'subdir' ] . '/' . $file[ 'name' ] );
 				wp_update_attachment_metadata( $wpbb_attach_id, $wpbb_attach_data );
-			
+				
+				/* set attachments - the cv */
+				$attachments[] = $moved_file[ 'file' ];
+				
 			}
 			
-			/* set an output message */
-			$wpbb_messages[] = '<p class="message success">Thank you. You application has been received.</p>';
-			
-		} // end check application post added
-				
-		/* add filter below to allow / force mail to send as html */
-		add_filter( 'wp_mail_content_type', create_function( '', 'return "text/html"; ' ) );
-		
-		/* get the post object for the job being applied for */
-		$job_post = get_post( $job_post );
-		
-		/* build the content of the email */
-		$wpbb_email_content = '
-		
-			<p>' . $_POST[ 'wpbb_name' ] . ' has completed an application for ' . $job_post->the_title . ' which has the job reference of ' . $_POST[ 'wpbb_job_reference' ] . '. The applicants email address is ' . $_POST[ 'wpbb_email' ] . '. Below is a summary of their responses:</p>
-			
-			<ul>
-				<li>Applicant Name: ' . esc_html( get_the_title( $wpbb_application_id ) ) . '</li>
-				<li>Applicant Email Address: ' . esc_html( get_post_meta( $wpbb_application_id, '_wpbb_applicant_email', true ) ) . '</li>
-				<li>Job Title: ' . esc_html( get_the_title( $job_post->ID ) ) . '</li>
-				<li>Job Reference: ' . esc_html( get_post_meta( $job_post->ID, '_wpbb_job_reference', true ) ) . '</li>
-				<li>Job Permalink: <a href="' . esc_url( get_permalink( $job_post->ID ) ) . '">' . esc_url( get_permalink( $job_post->ID ) ) . '</a></li>
-				<li><a href="' . get_edit_post_link( $wpbb_application_id ) . '">Application Edit Link</a></li>
-				<li><a href="' . esc_url( $wpbb_moved_file[ 'url' ] ) . '">CV Attachment Link</a></li>
-			</ul>
-			
-			<p>Email sent by <a href="http://wpbroadbean.com">WP Broadbean WordPress plugin</a>.</p>
-			
-		';
-		
-		/* set up the mail variables */
-		$wpbb_mail_subject = 'New Job Application Submitted - ' . esc_html( get_the_title( $wpbb_application_id ) );
-		$wpbb_email_headers = 'From: ' . $_POST[ 'wpbb_name' ] . ' <' . $_POST[ 'wpbb_email' ] . '>';
-		
-		/**
-		 * set the content of the email as a variable
-		 * this is made filterable and is passed the job post object being applied for
-		 * along with the application post id
-		 * devs can use this filter to change the contents of the email sent
-		 */
-		$wpbb_mail_content = wpbb_generate_email_content( apply_filters( 'wpbb_application_email_content', $wpbb_email_content, $job_post, $wpbb_application_id ) );
-		
-		$wpbb_mail_recipients = get_post_meta( $job_post->ID, '_wpbb_job_contact_email', true ) . ',' . get_post_meta( $job_post->ID, '_wpbb_job_broadbean_application_email', true );
-		
-		/* set attachments - the cv */
-		$wpbb_attachments = array( WP_CONTENT_DIR . '/uploads' . $wpbb_wp_upload_dir[ 'subdir' ] . '/' . $wpbb_uploaded_file[ 'name' ] );
-		
-		/* send the mail */
-		$wpbb_send_email = wp_mail(
-			$wpbb_mail_recipients,
-			$wpbb_mail_subject,
-			$wpbb_mail_content,
-			$wpbb_email_headers,
-			$wpbb_attachments
-		);
-		
-		/* remove filter below to allow / force mail to send as html */
-		remove_filter( 'wp_mail_content_type', create_function( '', 'return "text/html"; ' ) );
+		}
 	
-	} // end if form posted
+	}
+	
+	/* check the application post has been added */
+	if( $wpbb_application_id != 0 ) {
+		
+		/* loop through each posted field to save as meta data */
+		foreach( $wpbb_meta_save as $cf_key => $cf_value ) {
+			
+			/* add the post meta */
+			add_post_meta( $wpbb_application_id, '_wpbb_' . $cf_key, sanitize_text_field( $cf_value ), true );
+			
+		}
+						
+		/* set an output message */
+		$wpbb_application_form_messages[] = '<p class="message success">Thank you. You application has been received.</p>';
+		
+	} // end check application post added
+	
+	/* send the email */
+	wpbb_send_application_email(
+		$attachments,
+		$wpbb_meta_save,
+		$wpbb_application_id
+	);
 	
 }
 
