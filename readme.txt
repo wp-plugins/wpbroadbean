@@ -4,7 +4,7 @@ Donate link: http://markwilkinson.me/saythanks
 Tags: jobs, recruitment
 Requires at least: 3.9
 Tested up to: 4.2.2
-Stable tag: 2.0.8
+Stable tag: 2.0.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,16 +36,6 @@ To install the plugin:
 
 Your first task is to contact Broadbean and let them know that you want to create a new feed from your Broadbean Adcourier account to your WordPress website. It is also important to tell them that your integration will be using the WP Broadbean Plugin by Mark Wilkinson. You will need to indicate that you require the standard feed to be setup for this plugin without any changes being made.
 
-**How do I submit my feed for development by Broadbean?**
-
-Once you have completed the above the Broadbean team will probably direct you to the following page:
-
-[http://api.adcourier.com/docs/index.cgi?page=jobboards_register](http://api.adcourier.com/docs/index.cgi?page=jobboards_register)
-
-Here you are supplied with a form to complete. Follow the instructions here in order to complete this:
-
-[https://github.com/wpmark/wpbroadbean/wiki/Job-Board-Registration](https://github.com/wpmark/wpbroadbean/wiki/Job-Board-Registration)
-
 **Do Broadbean charge for this?**
 
 Probably yes! Contact your Broadbean account manager in order to get a price for developing a feed to your WordPress website.
@@ -70,6 +60,9 @@ Take a look at the [Wiki on Github](https://github.com/wpmark/wpbroadbean/wiki/)
 2. Single job edit post screen
 
 == Changelog ==
+
+= 2.0.9 =
+* Prevent an error when trying to add a term with an empty string as the term name. It essentially allows you to have blank terms when sent. Thanks to Susie Black for input on this issue.
 
 = 2.0.8 =
 * Application form php warnings with WP_DEBUG on are not removed on the application form page
