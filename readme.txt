@@ -52,8 +52,6 @@ Yes you can. The plugin is built with extensibility in mind and therefore you ca
 
 Broadbean can built you a completely bespoke feed to your site, with practically any date you want about each job you post. The WP Broadbean Plugin can handle this through its extensibility features. You can add fields and taxonomies as well as remove the default ones should you wish too. The plugin was built with extensibility in mind with a number of actions and filters available to developers.
 
-Take a look at the [Wiki on Github](https://github.com/wpmark/wpbroadbean/wiki/) in order to find some examples of the things you can do.
-
 == Screenshots ==
 
 1. Job listings in the WordPress admin
